@@ -7,8 +7,8 @@
   const { useState, useEffect, useRef } = React;
   const ce = React.createElement;
 
-  const LOG = (...args) => console.log("[StashTranscode]", ...args);
-  const WARN = (...args) => console.warn("[StashTranscode]", ...args);
+  const LOG = (...args) => console.log("[MRStashTranscode]", ...args);
+  const WARN = (...args) => console.warn("[MRStashTranscode]", ...args);
 
   LOG("Plugin script loaded, Stash v0.31");
 
@@ -44,7 +44,7 @@
       `mutation RunPluginTask($plugin_id: ID!, $task_name: String!, $args: [PluginArgInput!]) {
         runPluginTask(plugin_id: $plugin_id, task_name: $task_name, args: $args)
       }`,
-      { plugin_id: "StashTranscode", task_name: taskName, args: args || [] }
+      { plugin_id: "MRStashTranscode", task_name: taskName, args: args || [] }
     );
   }
 
@@ -90,7 +90,7 @@
   // ── Poll for dry run results ───────────────────────────────────────────────
 
   async function pollDryRunResults(sceneId, onResult, onProgress, onError, maxAttempts) {
-    const base = `/plugin/StashTranscode/assets/dryrun_${sceneId}.json`;
+    const base = `/plugin/MRStashTranscode/assets/dryrun_${sceneId}.json`;
     let attempts = 0;
     const limit = maxAttempts || 360; // 3 min at 500ms — Pi encodes are slow
 
@@ -164,7 +164,7 @@
   }
 
   // ── DOM diagnosis helper ───────────────────────────────────────────────────
-  // Call this from the browser console: StashTranscode.diagnose()
+  // Call this from the browser console: MRStashTranscode.diagnose()
   // It will log every candidate element so we can pick the right selector.
 
   function diagnose() {
@@ -200,7 +200,7 @@
     LOG("the element containing the scene name, then note its class/tag.");
   }
 
-  window.StashTranscode = { diagnose };
+  window.MRStashTranscode = { diagnose };
 
   // ── Batch Modal ────────────────────────────────────────────────────────────────
 
@@ -235,7 +235,7 @@
     useEffect(() => {
       gqlQuery("query { configuration { plugins } }")
         .then(d => {
-          const cfg = d.configuration && d.configuration.plugins && d.configuration.plugins.StashTranscode;
+          const cfg = d.configuration && d.configuration.plugins && d.configuration.plugins.MRStashTranscode;
           if (cfg && cfg.target_tag) setTagName(cfg.target_tag);
         })
         .catch(() => {});
@@ -291,7 +291,7 @@
 
         // Poll for completion before moving to next scene
         await new Promise(resolve => {
-          const base = `/plugin/StashTranscode/assets/transcode_${scene.id}.json`;
+          const base = `/plugin/MRStashTranscode/assets/transcode_${scene.id}.json`;
           let attempts = 0;
           const iv = setInterval(async () => {
             if (cancelled) { clearInterval(iv); resolve("cancelled"); return; }
@@ -306,7 +306,7 @@
                 }
                 // Show ffmpeg progress if available
                 try {
-                  const pRes = await fetch(`/plugin/StashTranscode/assets/progress_${scene.id}.json?t=${Date.now()}`);
+                  const pRes = await fetch(`/plugin/MRStashTranscode/assets/progress_${scene.id}.json?t=${Date.now()}`);
                   if (pRes.ok) {
                     const p = await pRes.json();
                     const eta = p.eta_secs != null
@@ -481,9 +481,9 @@
 
   function BatchToolEntry() {
     return ce("div", { style: { marginTop: 24, paddingTop: 24, borderTop: "1px solid rgba(255,255,255,0.08)" } },
-      ce("h3", { style: { fontSize: 16, fontWeight: 600, color: "#eee", marginBottom: 4 } }, "StashTranscode"),
+      ce("h3", { style: { fontSize: 16, fontWeight: 600, color: "#eee", marginBottom: 4 } }, "MRStashTranscode"),
       ce("p", { style: { fontSize: 13, color: "#777", marginBottom: 12 } },
-        "Transcode H.264 scenes to H.265 in bulk. Set your target tag in Settings → Plugins → StashTranscode."
+        "Transcode H.264 scenes to H.265 in bulk. Set your target tag in Settings → Plugins → MRStashTranscode."
       ),
       ce("button", { className: "st-btn st-btn-primary", onClick: openBatchModal }, "Open Batch Transcode")
     );
@@ -680,7 +680,7 @@
       }
 
       // Poll transcode_{sceneId}.json for completion
-      const base = `/plugin/StashTranscode/assets/transcode_${scene.id}.json`;
+      const base = `/plugin/MRStashTranscode/assets/transcode_${scene.id}.json`;
       let attempts = 0;
       const limit = 2160; // 18 min at 500ms
       const iv = setInterval(async () => {
@@ -703,7 +703,7 @@
               } else if (data.status === "running") {
                 // Also fetch progress file for detailed stats
                 try {
-                  const pRes = await fetch(`/plugin/StashTranscode/assets/progress_${scene.id}.json?t=${Date.now()}`);
+                  const pRes = await fetch(`/plugin/MRStashTranscode/assets/progress_${scene.id}.json?t=${Date.now()}`);
                   if (pRes.ok) {
                     const p = await pRes.json();
                     const pct = p.pct || 0;
@@ -752,7 +752,7 @@
     },
       ce("div", { className: "st-modal-box" },
         ce("div", { className: "st-modal-header" },
-          ce("h2", null, "StashTranscode"),
+          ce("h2", null, "MRStashTranscode"),
           ce("button", { className: "st-modal-close", onClick: onClose }, "✕")
         ),
         ce("div", { className: "st-subtitle" }, "Transcode H.264 → H.265. Run a dry run first."),
@@ -850,7 +850,7 @@
               ce("div", { className: "st-compare-panel panel-before" },
                 ce("div", { className: "st-compare-label" }, "H.264 — Original"),
                 ce("img", {
-                  src: `/plugin/StashTranscode/assets/${dryRunResults.before_thumb}?t=${Date.now()}`,
+                  src: `/plugin/MRStashTranscode/assets/${dryRunResults.before_thumb}?t=${Date.now()}`,
                   alt: "before",
                   style: { cursor: "pointer" },
                   onClick: (e) => e.target.requestFullscreen && e.target.requestFullscreen(),
@@ -859,7 +859,7 @@
               ce("div", { className: "st-compare-panel panel-after" },
                 ce("div", { className: "st-compare-label" }, "H.265 — Sample"),
                 ce("img", {
-                  src: `/plugin/StashTranscode/assets/${dryRunResults.after_thumb}?t=${Date.now()}`,
+                  src: `/plugin/MRStashTranscode/assets/${dryRunResults.after_thumb}?t=${Date.now()}`,
                   alt: "after",
                   style: { cursor: "pointer" },
                   onClick: (e) => e.target.requestFullscreen && e.target.requestFullscreen(),

@@ -1,9 +1,9 @@
-name: StashTranscode
+name: MRStashTranscode
 description: Transcodes h264 scenes to h265. Adds a codec badge to scene pages with a one-click transcode workflow.
 version: 1.2.0
 exec:
   - python3
-  - /root/.stash/plugins/StashTranscode/StashTranscode.py
+  - /root/.stash/plugins/MRStashTranscode/MRStashTranscode.py
 interface: raw
 tasks:
   - name: Batch Transcode Tag to H265
@@ -20,9 +20,9 @@ tasks:
       mode: Transcode Scene
 ui:
   javascript:
-    - StashTranscode.js
+    - MRStashTranscode.js
   css:
-    - StashTranscode.css
+    - MRStashTranscode.css
   assets:
     /: assets/
 settings:

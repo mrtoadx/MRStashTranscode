@@ -299,7 +299,7 @@ def task_transcode_scene(url, apikey, args):
 
 
 def task_batch_transcode(url, apikey, plugins_config):
-    my_config = plugins_config.get("StashTranscode", {})
+    my_config = plugins_config.get("MRStashTranscode", {})
     target_tag = my_config.get("target_tag", "").strip()
 
     if not target_tag:

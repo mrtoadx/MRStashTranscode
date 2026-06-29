@@ -197,7 +197,7 @@
     LOG("the element containing the scene name, then note its class/tag.");
   }
 
-  window.MRStashTranscode = { diagnose };
+  window.MRStashTranscode = { diagnose, openModal: (id) => openToolModal(id) };
 
   // ── Batch Modal ────────────────────────────────────────────────────────────────
 
